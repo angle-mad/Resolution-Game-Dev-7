@@ -19,7 +19,7 @@ let score = 0;
 
 // draw your player
 function drawPlayer() {
-    ctx.fillStyle = '#FFD700';
+    ctx.fillStyle = '#e6c719';
     ctx.fillRect(player.x, player.y, player.width, player.height);
     // draw a cuteee face
     ctx.fillStyle = '#000';
@@ -29,12 +29,17 @@ function drawPlayer() {
     ctx.beginPath();
     ctx.arc(player.x + 25, player.y + 15, 3, 0, Math.PI * 2);
     ctx.fill();
+    ctx.fillRect(player.x+5, player.y + 30, player.width -10, player.height - 45);
+    ctx.fillStyle = '#e237c6';
+    ctx.beginPath();
+    ctx.arc(player.x + 20, player.y + 30, 6, 0, Math.PI * 1);
+    ctx.fill();
 }
 
 // draw the items
 function drawItems() {
     items.forEach((item, index) => {
-        ctx.fillStyle = '#FF69B4';
+        ctx.fillStyle = '#3acd3a';
         ctx.beginPath();
         ctx.arc(item.x, item.y, item.radius, 0, Math.PI * 2);
         ctx.fill();
@@ -46,6 +51,13 @@ function drawScore() {
     ctx.fillStyle = '#fff';
     ctx.font = 'bold 20px Arial';
     ctx.fillText('Score: ' + score, 10, 30);
+}
+
+function drawHealth() {
+    ctx.beginPath();
+    ctx.fillStyle = 'rgb(244, 17, 17)'
+    ctx.arc(110, 23, 10, 0, Math.PI * 2);
+    ctx.fill();
 }
 
 // update the player's position
@@ -91,14 +103,13 @@ function createItem() {
 // your main game loop
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
     updatePlayer();
     updateItems();
     
     drawPlayer();
     drawItems();
     drawScore();
-    
+    drawHealth()
     requestAnimationFrame(gameLoop);
 }
 
@@ -113,7 +124,7 @@ document.addEventListener('keyup', () => {
 });
 
 // create items periodically
-setInterval(createItem, 1000);
+setInterval(createItem, 500);
 
 // start the game!
 gameLoop();
