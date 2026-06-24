@@ -15,6 +15,7 @@ const player = {
 
 // store items to collect
 const items = [];
+const badItems = [];
 let score = 0;
 
 // draw your player
@@ -36,6 +37,22 @@ function drawPlayer() {
     ctx.fill();
 }
 
+// draw your score
+function drawScore() {
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 20px Arial';
+    ctx.fillText('Score: ' + score, 10, 30);
+}
+
+// update the player's position
+function updatePlayer() {
+    player.x += player.dx;
+    if (player.x < 0) player.x = 0;
+    if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+}
+
+//Good and Bad Items stuff
+
 // draw the items
 function drawItems() {
     items.forEach((item, index) => {
@@ -44,27 +61,6 @@ function drawItems() {
         ctx.arc(item.x, item.y, item.radius, 0, Math.PI * 2);
         ctx.fill();
     });
-}
-
-// draw your score
-function drawScore() {
-    ctx.fillStyle = '#fff';
-    ctx.font = 'bold 20px Arial';
-    ctx.fillText('Score: ' + score, 10, 30);
-}
-
-function drawHealth() {
-    ctx.beginPath();
-    ctx.fillStyle = 'rgb(244, 17, 17)'
-    ctx.arc(110, 23, 10, 0, Math.PI * 2);
-    ctx.fill();
-}
-
-// update the player's position
-function updatePlayer() {
-    player.x += player.dx;
-    if (player.x < 0) player.x = 0;
-    if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
 }
 
 // update the items
@@ -91,25 +87,72 @@ function updateItems() {
 
 // create items
 function createItem() {
-    const item = {
+    const badItem = {
         x: Math.random() * (canvas.width - 20),
         y: -20,
         radius: 10,
         dy: Math.random() * 2 + 1
     };
-    items.push(item);
+    items.push(badItem);
 }
+
+// draw bad items
+function drawBadItems() {
+    badItems.forEach((item, index) => {
+        ctx.fillStyle = '#cd3a3a';
+        ctx.beginPath();
+        ctx.arc(item.x, item.y, item.radius, 0, Math.PI * 2);
+        ctx.fill();
+    });
+}
+
+// update the bad items
+function updateBadItems() {
+    badItems.forEach((item, index) => {
+        item.y += item.dy;
+        // check if it collides with the player
+        if (
+            item.x > player.x &&
+            item.x < player.x + player.width &&
+            item.y > player.y &&
+            item.y < player.y + player.height
+        ) {
+            badItems.splice(index, 1);
+            score-=5;
+        }
+        
+        // remove if it's off the screen
+        if (item.y > canvas.height) {
+            badItems.splice(index, 1);
+        }
+    });
+}
+
+// create bad items
+function createBadItem() {
+    const item = {
+        x: Math.random() * (canvas.width - 20),
+        y: -20,
+        radius: 15,
+        dy: Math.random() * 2 + 1
+    };
+    badItems.push(item);
+}
+
+
+
 
 // your main game loop
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     updatePlayer();
     updateItems();
+    updateBadItems();
     
     drawPlayer();
     drawItems();
+    drawBadItems();
     drawScore();
-    drawHealth()
     requestAnimationFrame(gameLoop);
 }
 
@@ -124,7 +167,8 @@ document.addEventListener('keyup', () => {
 });
 
 // create items periodically
-setInterval(createItem, 500);
+setInterval(createItem, 800);
+setInterval(createBadItem, 10000);
 
 // start the game!
 gameLoop();
